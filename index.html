@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>بركر ويست - الإدارة</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&family=Reem+Kufi:wght@700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0a0f;--panel:#13131a;--panel2:#1a1a24;--line:#25253a;--text:#e8e8f0;--muted:#6b6b8a;--accent:#f59e0b;--accent2:#fbbf24;--success:#10b981;--danger:#ef4444;--info:#3b82f6;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+/* LOGIN */
+.login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:radial-gradient(ellipse at 50% 0%,rgba(245,158,11,.15),transparent 60%);}
+.login-card{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:32px 24px;width:100%;max-width:400px;}
+.login-logo{width:72px;height:72px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:18px;display:grid;place-items:center;font-size:36px;margin:0 auto 16px;box-shadow:0 10px 30px rgba(245,158,11,.3);}
+.login-title{text-align:center;font-size:22px;font-weight:900;margin-bottom:4px;}
+.login-sub{text-align:center;color:var(--muted);font-size:13px;margin-bottom:24px;}
+.form-group{margin-bottom:12px;}
+.form-group label{display:block;font-size:12px;color:var(--muted);margin-bottom:5px;}
+.form-group input{width:100%;padding:11px 12px;background:var(--panel2);border:1px solid var(--line);border-radius:10px;color:var(--text);font-family:inherit;font-size:14px;}
+.form-group input:focus{outline:none;border-color:var(--accent);}
+.err-box{background:rgba(239,68,68,.1);border:1px solid var(--danger);color:var(--danger);padding:10px;border-radius:8px;font-size:12px;margin-bottom:12px;display:none;}
+.btn{padding:12px 16px;border:none;border-radius:10px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:6px;}
+.btn:active{transform:scale(.98);}
+.btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#000;width:100%;justify-content:center;}
+.btn-success{background:var(--success);color:#fff;}
+.btn-danger{background:var(--danger);color:#fff;}
+.btn-ghost{background:var(--panel2);color:var(--text);border:1px solid var(--line);}
+/* LAYOUT */
+.app-layout{display:grid;grid-template-columns:220px 1fr;min-height:100vh;}
+@media(max-width:768px){.app-layout{grid-template-columns:1fr;}}
+/* SIDEBAR */
+.sidebar{background:var(--panel);border-left:1px solid var(--line);padding:16px 12px;display:flex;flex-direction:column;gap:4px;position:sticky;top:0;height:100vh;overflow-y:auto;}
+.sb-logo{display:flex;align-items:center;gap:10px;padding:8px;margin-bottom:12px;}
+.sb-logo-mark{width:38px;height:38px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:10px;display:grid;place-items:center;font-size:18px;}
+.sb-logo-text{font-family:'Reem Kufi';font-size:14px;font-weight:700;}
+.sb-btn{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;cursor:pointer;font-size:13px;font-weight:700;color:var(--muted);border:none;background:transparent;width:100%;text-align:right;transition:all .15s;}
+.sb-btn:hover{background:var(--panel2);color:var(--text);}
+.sb-btn.active{background:rgba(245,158,11,.15);color:var(--accent);}
+.sb-icon{font-size:16px;width:20px;text-align:center;}
+.sb-bottom{margin-top:auto;padding-top:12px;border-top:1px solid var(--line);}
+/* MAIN */
+.main-content{padding:16px;overflow-y:auto;}
+.page-title{font-family:'Reem Kufi';font-size:20px;margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-bottom:16px;}
+.stat-card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;}
+.stat-value{font-size:24px;font-weight:900;font-family:'Reem Kufi';color:var(--accent);}
+.stat-label{font-size:11px;color:var(--muted);margin-top:4px;}
+/* TABLE */
+.table-wrap{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-bottom:16px;}
+.table-header{padding:12px 16px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;}
+.table-header h3{font-size:14px;font-weight:700;}
+table{width:100%;border-collapse:collapse;}
+th{padding:10px 12px;font-size:11px;color:var(--muted);font-weight:700;text-align:right;border-bottom:1px solid var(--line);background:var(--panel2);}
+td{padding:10px 12px;font-size:13px;border-bottom:1px solid rgba(37,37,58,.5);}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:rgba(245,158,11,.04);}
+/* BADGE */
+.badge{display:inline-block;padding:2px 8px;border-radius:6px;font-size:10px;font-weight:700;}
+.b-pending{background:rgba(245,158,11,.15);color:var(--accent);}
+.b-done{background:rgba(16,185,129,.15);color:var(--success);}
+.b-delivery{background:rgba(59,130,246,.15);color:var(--info);}
+.b-salon{background:rgba(16,185,129,.15);color:var(--success);}
+.b-takeaway{background:rgba(107,107,138,.2);color:var(--muted);}
+/* FORM */
+.form-card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:14px;}
+.form-card h3{font-size:14px;font-weight:700;margin-bottom:14px;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.fi{margin-bottom:10px;}
+.fi label{display:block;font-size:11px;color:var(--muted);margin-bottom:4px;}
+.fi input,.fi select{width:100%;padding:9px 10px;background:var(--panel2);border:1px solid var(--line);border-radius:8px;color:var(--text);font-family:inherit;font-size:13px;}
+.fi input:focus,.fi select:focus{outline:none;border-color:var(--accent);}
+/* ORDER CARD */
+.order-card{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:8px;}
+.order-card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+.order-id{font-weight:900;font-size:13px;}
+.order-items-list{font-size:11px;color:var(--muted);line-height:1.8;}
+.order-footer-row{display:flex;justify-content:space-between;align-items:center;margin-top:8px;}
+/* TOAST */
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--panel);border:1px solid var(--success);border-radius:12px;padding:12px 20px;font-size:13px;font-weight:700;z-index:1000;transition:transform .3s;white-space:nowrap;}
+.toast.show{transform:translateX(-50%) translateY(0);}
+.spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(0,0,0,.3);border-top-color:#000;border-radius:50%;animation:spin .6s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.empty{text-align:center;padding:28px;color:var(--muted);}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginWrap" class="login-wrap">
+  <div class="login-card">
+    <div class="login-logo">⚙️</div>
+    <div class="login-title">بركر ويست</div>
+    <div class="login-sub">لوحة الإدارة</div>
+    <div class="err-box" id="loginErr"></div>
+    <div class="form-group"><label>البريد الإلكتروني</label><input type="email" id="loginEmail" placeholder="admin@burgerwest.com"></div>
+    <div class="form-group"><label>كلمة المرور</label><input type="password" id="loginPass" placeholder="••••••••"></div>
+    <button class="btn btn-primary" onclick="doLogin()">🔐 دخول</button>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="appWrap" style="display:none;" class="app-layout">
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sb-logo">
+      <div class="sb-logo-mark">🍔</div>
+      <div class="sb-logo-text">بركر ويست</div>
+    </div>
+    <button class="sb-btn active" onclick="showPage('dashboard')" id="nav-dashboard"><span class="sb-icon">🏠</span> الرئيسية</button>
+    <button class="sb-btn" onclick="showPage('orders')" id="nav-orders"><span class="sb-icon">📋</span> الطلبات</button>
+    <button class="sb-btn" onclick="showPage('cashiers')" id="nav-cashiers"><span class="sb-icon">💳</span> الكاشيرات</button>
+    <button class="sb-btn" onclick="showPage('menu')" id="nav-menu"><span class="sb-icon">🍽️</span> المنيو</button>
+    <div class="sb-bottom">
+      <button class="sb-btn" onclick="doLogout()"><span class="sb-icon">🚪</span> خروج</button>
+    </div>
+  </div>
+  <!-- MAIN -->
+  <div class="main-content" id="mainContent"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { initializeAuth, browserLocalPersistence, indexedDBLocalPersistence,
+  signInWithEmailAndPassword, signOut, onAuthStateChanged }
+  from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getFirestore, collection, doc, setDoc, getDoc, getDocs, addDoc, updateDoc, deleteDoc, query, where, onSnapshot, serverTimestamp, orderBy, limit }
+  from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+const app = initializeApp({
+  apiKey:"AIzaSyAIkpN0_cSJzSOq-oWDjBbTPJUxe7MHDTk",
+  authDomain:"restaurant-pos-891d8.firebaseapp.com",
+  projectId:"restaurant-pos-891d8",
+  storageBucket:"restaurant-pos-891d8.firebasestorage.app",
+  messagingSenderId:"582886444374",
+  appId:"1:582886444374:web:70251a1d78e6258a759af7"
+});
+const auth = initializeAuth(app,{persistence:[indexedDBLocalPersistence,browserLocalPersistence]});
+const db = getFirestore(app);
+window._fb = {auth,db,signInWithEmailAndPassword,signOut,onAuthStateChanged,
+  collection,doc,setDoc,getDoc,getDocs,addDoc,updateDoc,deleteDoc,
+  query,where,onSnapshot,serverTimestamp,orderBy,limit};
+window.dispatchEvent(new Event('fbReady'));
+</script>
+
+<script>
+'use strict';
+let currentUser=null, adminData=null, unsubscribers=[], currentPage='dashboard';
+let allOrders=[], allCashiers=[], allMenu=[], allCategories=[];
+
+window.addEventListener('fbReady',()=>{
+  window._fb.onAuthStateChanged(window._fb.auth, async user=>{
+    if(user){
+      // check admin
+      const snap = await window._fb.getDocs(window._fb.query(
+        window._fb.collection(window._fb.db,'admins'),
+        window._fb.where('email','==',user.email)
+      ));
+      if(snap.empty){await window._fb.signOut(window._fb.auth);showLoginErr('ليس لديك صلاحية');return;}
+      currentUser=user;
+      adminData={id:snap.docs[0].id,...snap.docs[0].data()};
+      enterApp();
+    } else {
+      currentUser=null;
+      document.getElementById('loginWrap').style.display='flex';
+      document.getElementById('appWrap').style.display='none';
+    }
+  });
+});
+
+async function doLogin(){
+  const email=document.getElementById('loginEmail').value.trim();
+  const pass=document.getElementById('loginPass').value;
+  if(!email||!pass){showLoginErr('أدخل البيانات');return;}
+  try{await window._fb.signInWithEmailAndPassword(window._fb.auth,email,pass);}
+  catch(e){showLoginErr('بيانات غير صحيحة');}
+}
+window.doLogin=doLogin;
+window.doLogout=async()=>{unsubscribers.forEach(u=>u&&u());unsubscribers=[];await window._fb.signOut(window._fb.auth);};
+function showLoginErr(msg){const el=document.getElementById('loginErr');el.textContent=msg;el.style.display='block';}
+
+function enterApp(){
+  document.getElementById('loginWrap').style.display='none';
+  document.getElementById('appWrap').style.display='grid';
+  loadData();
+  showPage('dashboard');
+}
+
+async function loadData(){
+  // Load cashiers
+  const cSnap=await window._fb.getDocs(window._fb.collection(window._fb.db,'cashiers'));
+  allCashiers=cSnap.docs.map(d=>({id:d.id,...d.data()}));
+  // Load menu
+  const mSnap=await window._fb.getDocs(window._fb.collection(window._fb.db,'menu'));
+  allMenu=mSnap.docs.map(d=>({id:d.id,...d.data()}));
+  const catSnap=await window._fb.getDocs(window._fb.collection(window._fb.db,'categories'));
+  allCategories=catSnap.docs.map(d=>({id:d.id,...d.data()}));
+  // Listen orders
+  unsubscribers.push(window._fb.onSnapshot(
+    window._fb.query(window._fb.collection(window._fb.db,'orders'),window._fb.orderBy('createdAtMs','desc'),window._fb.limit(100)),
+    snap=>{allOrders=snap.docs.map(d=>({id:d.id,...d.data()}));if(currentPage==='dashboard'||currentPage==='orders')renderPage();}
+  ));
+}
+
+window.showPage=function(page){
+  currentPage=page;
+  document.querySelectorAll('.sb-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('nav-'+page)?.classList.add('active');
+  renderPage();
+};
+
+function renderPage(){
+  const c=document.getElementById('mainContent');
+  if(currentPage==='dashboard') c.innerHTML=renderDashboard();
+  else if(currentPage==='orders') c.innerHTML=renderOrders();
+  else if(currentPage==='cashiers'){c.innerHTML=renderCashiers();}
+  else if(currentPage==='menu') c.innerHTML=renderMenuPage();
+}
+
+function renderDashboard(){
+  const today=new Date().toDateString();
+  const todayOrders=allOrders.filter(o=>new Date(o.createdAtMs).toDateString()===today);
+  const todayRevenue=todayOrders.reduce((s,o)=>s+(o.total||0),0);
+  const pending=allOrders.filter(o=>o.status==='pending').length;
+  return `<div class="page-title">🏠 الرئيسية</div>
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-value">${allOrders.length}</div><div class="stat-label">إجمالي الطلبات</div></div>
+    <div class="stat-card"><div class="stat-value">${todayOrders.length}</div><div class="stat-label">طلبات اليوم</div></div>
+    <div class="stat-card"><div class="stat-value" style="color:var(--success)">${fmt(todayRevenue)}</div><div class="stat-label">إيرادات اليوم د.ع</div></div>
+    <div class="stat-card"><div class="stat-value" style="color:var(--danger)">${pending}</div><div class="stat-label">طلبات معلقة</div></div>
+    <div class="stat-card"><div class="stat-value">${allCashiers.length}</div><div class="stat-label">الكاشيرات</div></div>
+    <div class="stat-card"><div class="stat-value">${allMenu.length}</div><div class="stat-label">أصناف المنيو</div></div>
+  </div>
+  <div class="table-wrap"><div class="table-header"><h3>📋 آخر الطلبات</h3></div>
+  ${allOrders.slice(0,10).map(o=>`
+    <div class="order-card">
+      <div class="order-card-header">
+        <span class="order-id">#${o.id.slice(0,6).toUpperCase()}</span>
+        <span class="badge ${o.status==='pending'?'b-pending':'b-done'}">${o.status==='pending'?'⏳ معلق':'✅ منجز'}</span>
+      </div>
+      <div class="order-items-list">${(o.items||[]).map(i=>`${i.name} ×${i.qty}`).join(' • ')}</div>
+      <div class="order-footer-row">
+        <span style="font-size:11px;color:var(--muted)">${o.cashierName||''} • ${orderTypeTxt(o.orderType)}</span>
+        <span style="font-weight:700;color:var(--accent)">${fmt(o.total)} د.ع</span>
+      </div>
+    </div>`).join('')}
+  </div>`;
+}
+
+function renderOrders(){
+  return `<div class="page-title">📋 الطلبات</div>
+  <div class="table-wrap"><div class="table-header"><h3>جميع الطلبات (${allOrders.length})</h3></div>
+  <table><thead><tr><th>رقم</th><th>النوع</th><th>الكاشير</th><th>الأصناف</th><th>المجموع</th><th>الحالة</th><th>إجراء</th></tr></thead><tbody>
+  ${allOrders.map(o=>`<tr>
+    <td><b>#${o.id.slice(0,6).toUpperCase()}</b></td>
+    <td><span class="badge b-${o.orderType}">${orderTypeTxt(o.orderType)}</span></td>
+    <td>${o.cashierName||'—'}</td>
+    <td style="font-size:11px;color:var(--muted)">${(o.items||[]).map(i=>`${i.name}×${i.qty}`).join(', ')}</td>
+    <td style="color:var(--accent);font-weight:700">${fmt(o.total)}</td>
+    <td><span class="badge ${o.status==='pending'?'b-pending':'b-done'}">${o.status==='pending'?'معلق':'منجز'}</span></td>
+    <td><button class="btn btn-danger" style="padding:4px 8px;font-size:11px;" onclick="deleteOrder('${o.id}')">🗑️</button></td>
+  </tr>`).join('')}
+  </tbody></table></div>`;
+}
+
+window.deleteOrder=async function(id){
+  if(!confirm('حذف الطلب؟'))return;
+  await window._fb.deleteDoc(window._fb.doc(window._fb.db,'orders',id));
+  showToast('🗑️ تم الحذف');
+};
+
+function renderCashiers(){
+  return `<div class="page-title">💳 الكاشيرات</div>
+  <div class="form-card">
+    <h3>➕ إضافة كاشير جديد</h3>
+    <div class="form-row">
+      <div class="fi"><label>الاسم</label><input id="cName" placeholder="اسم الكاشير"></div>
+      <div class="fi"><label>البريد الإلكتروني</label><input id="cEmail" type="email" placeholder="cashier@burgerwest.com"></div>
+    </div>
+    <div class="form-row">
+      <div class="fi"><label>كلمة المرور</label><input id="cPass" type="password" placeholder="كلمة المرور"></div>
+      <div class="fi"><label>نوع الكاشير</label>
+        <select id="cType">
+          <option value="delivery_takeaway">🛵 دلفري + سفري</option>
+          <option value="salon_takeaway">🪑 صالة + سفري</option>
+        </select>
+      </div>
+    </div>
+    <button class="btn btn-success" onclick="addCashier()">➕ إضافة</button>
+  </div>
+  <div class="table-wrap"><div class="table-header"><h3>الكاشيرات (${allCashiers.length})</h3></div>
+  <table><thead><tr><th>الاسم</th><th>البريد</th><th>النوع</th><th>إجراء</th></tr></thead><tbody>
+  ${allCashiers.map(c=>`<tr>
+    <td><b>${c.name}</b></td>
+    <td style="font-size:12px">${c.email}</td>
+    <td>${c.cashierType==='salon_takeaway'?'🪑 صالة+سفري':'🛵 دلفري+سفري'}</td>
+    <td><button class="btn btn-danger" style="padding:4px 8px;font-size:11px;" onclick="deleteCashier('${c.id}')">🗑️</button></td>
+  </tr>`).join('')}
+  </tbody></table></div>`;
+}
+
+window.addCashier=async function(){
+  const name=document.getElementById('cName').value.trim();
+  const email=document.getElementById('cEmail').value.trim();
+  const pass=document.getElementById('cPass').value;
+  const type=document.getElementById('cType').value;
+  if(!name||!email||!pass){showToast('⚠️ أدخل جميع البيانات');return;}
+  try{
+    const ref=await window._fb.addDoc(window._fb.collection(window._fb.db,'cashiers'),{name,email,cashierType:type,createdAt:Date.now()});
+    allCashiers.push({id:ref.id,name,email,cashierType:type});
+    showToast('✅ تمت الإضافة');
+    renderPage();
+  }catch(e){showToast('❌ '+e.message);}
+};
+
+window.deleteCashier=async function(id){
+  if(!confirm('حذف الكاشير؟'))return;
+  await window._fb.deleteDoc(window._fb.doc(window._fb.db,'cashiers',id));
+  allCashiers=allCashiers.filter(c=>c.id!==id);
+  showToast('🗑️ تم الحذف');renderPage();
+};
+
+function renderMenuPage(){
+  return `<div class="page-title">🍽️ المنيو</div>
+  <div class="form-card">
+    <h3>➕ إضافة صنف</h3>
+    <div class="form-row">
+      <div class="fi"><label>اسم الصنف</label><input id="mName" placeholder="اسم الصنف"></div>
+      <div class="fi"><label>السعر (د.ع)</label><input id="mPrice" type="number" placeholder="0"></div>
+    </div>
+    <div class="form-row">
+      <div class="fi"><label>القسم</label>
+        <select id="mCat">${allCategories.map(c=>`<option value="${c.id}">${c.name}</option>`).join('')}</select>
+      </div>
+      <div class="fi"><label>قسم المطبخ</label>
+        <select id="mKitchen">
+          <option value="برگر">🍔 برگر</option>
+          <option value="بيتزا">🍕 بيتزا</option>
+          <option value="شاورما">🌯 شاورما</option>
+          <option value="كنتاكي">🍗 كنتاكي</option>
+          <option value="دايت">🥗 دايت</option>
+        </select>
+      </div>
+    </div>
+    <button class="btn btn-success" onclick="addMenuItem()">➕ إضافة</button>
+  </div>
+  <div class="table-wrap"><div class="table-header"><h3>الأصناف (${allMenu.length})</h3></div>
+  <table><thead><tr><th>الاسم</th><th>القسم</th><th>المطبخ</th><th>السعر</th><th>إجراء</th></tr></thead><tbody>
+  ${allMenu.map(m=>`<tr>
+    <td><b>${m.name}</b></td>
+    <td style="font-size:11px">${allCategories.find(c=>c.id===m.categoryId)?.name||'—'}</td>
+    <td style="font-size:11px">${m.kitchenSection||'—'}</td>
+    <td style="color:var(--accent);font-weight:700">${fmt(m.price)}</td>
+    <td><button class="btn btn-danger" style="padding:4px 8px;font-size:11px;" onclick="deleteMenuItem('${m.id}')">🗑️</button></td>
+  </tr>`).join('')}
+  </tbody></table></div>`;
+}
+
+window.addMenuItem=async function(){
+  const name=document.getElementById('mName').value.trim();
+  const price=Number(document.getElementById('mPrice').value);
+  const categoryId=document.getElementById('mCat').value;
+  const kitchenSection=document.getElementById('mKitchen').value;
+  if(!name||!price){showToast('⚠️ أدخل الاسم والسعر');return;}
+  const ref=await window._fb.addDoc(window._fb.collection(window._fb.db,'menu'),{name,price,categoryId,kitchenSection});
+  allMenu.push({id:ref.id,name,price,categoryId,kitchenSection});
+  showToast('✅ تمت الإضافة');renderPage();
+};
+
+window.deleteMenuItem=async function(id){
+  if(!confirm('حذف الصنف؟'))return;
+  await window._fb.deleteDoc(window._fb.doc(window._fb.db,'menu',id));
+  allMenu=allMenu.filter(m=>m.id!==id);
+  showToast('🗑️ تم الحذف');renderPage();
+};
+
+function orderTypeTxt(t){return{delivery:'🛵 دلفري',takeaway:'🥡 سفري',salon:'🪑 صالة'}[t]||t;}
+function fmt(n){return Number(n||0).toLocaleString('en-US');}
+let toastT;
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),3000);}
+window.showToast=showToast;
+</script>
+</body>
+</html>
