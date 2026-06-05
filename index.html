@@ -311,9 +311,19 @@ window.addCashier=async function(){
   const type=document.getElementById('cType').value;
   if(!name||!email||!pass){showToast('⚠️ أدخل جميع البيانات');return;}
   try{
+    // Create Firebase Auth user
+    const API_KEY = "AIzaSyAIkpN0_cSJzSOq-oWDjBbTPJUxe7MHDTk";
+    const res = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${API_KEY}`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({email,password:pass,returnSecureToken:false})
+    });
+    const authData = await res.json();
+    if(authData.error){throw new Error(authData.error.message);}
+    // Add to Firestore
     const ref=await window._fb.addDoc(window._fb.collection(window._fb.db,'cashiers'),{name,email,cashierType:type,createdAt:Date.now()});
     allCashiers.push({id:ref.id,name,email,cashierType:type});
-    showToast('✅ تمت الإضافة');
+    showToast('✅ تمت إضافة الكاشير بنجاح');
     renderPage();
   }catch(e){showToast('❌ '+e.message);}
 };
